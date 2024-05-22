@@ -55,11 +55,5 @@ namespace AccountAddressProgram
             var count = responseData["GetAddressesWithStringCountResult"].GetInt32();
             return count;
         }
-
-        class LoginData
-        {
-            public string Code { get; set; }
-            public string Message { get; set; }
-        }
     }
 }
