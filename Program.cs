@@ -33,27 +33,47 @@ namespace AccountAddressProgram
 
         static async Task<bool> Authorize(HttpClient client, string login, string password)
         {
-            var loginData = new Dictionary<string, string>() { { "UserName", login }, { "UserPassword", password } };
-            using var response = await client.PostAsJsonAsync("ServiceModel/AuthService.svc/Login", loginData);
-            var responseData = await response.Content.ReadFromJsonAsync<Dictionary<string, JsonElement>>();
-            var code = responseData["Code"].GetInt32();
-            return code == 0;
+            try
+            {
+                var loginData = new Dictionary<string, string>() { { "UserName", login }, { "UserPassword", password } };
+                using var response = await client.PostAsJsonAsync("ServiceModel/AuthService.svc/Login", loginData);
+                var responseData = await response.Content.ReadFromJsonAsync<Dictionary<string, JsonElement>>();
+                var code = responseData["Code"].GetInt32();
+                return code == 0;
+            }
+            catch (Exception) {
+                return false;
+            }
         }
 
         static async Task<int> GetAddressesCountWithOdata(HttpClient client)
         {
-            using var response = await client.GetAsync("0/odata/AccountAddress?$filter=contains(Address,'А')&$count=true&$top=0");
-            var responseData = await response.Content.ReadFromJsonAsync<Dictionary<string, JsonElement>>();
-            var count = responseData["@odata.count"].GetInt32();
-            return count;
+            try
+            {
+                using var response = await client.GetAsync("0/odata/AccountAddress?$filter=contains(Address,'А')&$count=true&$top=0");
+                var responseData = await response.Content.ReadFromJsonAsync<Dictionary<string, JsonElement>>();
+                var count = responseData["@odata.count"].GetInt32();
+                return count;
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
         }
 
         static async Task<int> GetAddressesCountWithService(HttpClient client)
         {
-            using var response = await client.GetAsync("0/rest/UsrAccountAddressService/GetAddressesWithStringCount?str=А");
-            var responseData = await response.Content.ReadFromJsonAsync<Dictionary<string, JsonElement>>();
-            var count = responseData["GetAddressesWithStringCountResult"].GetInt32();
-            return count;
+            try
+            {
+                using var response = await client.GetAsync("0/rest/UsrAccountAddressService/GetAddressesWithStringCount?str=А");
+                var responseData = await response.Content.ReadFromJsonAsync<Dictionary<string, JsonElement>>();
+                var count = responseData["GetAddressesWithStringCountResult"].GetInt32();
+                return count;
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
         }
     }
 }
